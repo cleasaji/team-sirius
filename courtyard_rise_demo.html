@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Team Sirius – Courtyard Rise</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f4f8f6;--card:#fff;--ink:#22302c;--mut:#5b6b66;--g:#1f3d36;--gr:#4e9a2b;--t:#c8623a;--b:#2e75b6;--l:#eaf2ee;--y:#f2b632;--warn:#fff4e5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1916;--card:#172521;--ink:#e6efeb;--mut:#9db1aa;--g:#8fd0b8;--gr:#7ccf58;--t:#e58a63;--b:#6aa9e0;--l:#21332d;--warn:#3a2f1c}}
+:root[data-theme="dark"]{--bg:#0f1916;--card:#172521;--ink:#e6efeb;--mut:#9db1aa;--g:#8fd0b8;--gr:#7ccf58;--t:#e58a63;--b:#6aa9e0;--l:#21332d;--warn:#3a2f1c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Calibri,'Segoe UI',system-ui,sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-family:Georgia,serif;color:var(--g);margin:0;font-size:26px}.sub{color:var(--mut);margin:2px 0 12px;font-size:14px}
+#nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+button{font:inherit;font-size:14px;border:1.5px solid var(--g);background:var(--card);color:var(--g);padding:6px 12px;border-radius:999px;cursor:pointer}
+button.on{background:var(--g);color:var(--card)}button.pn{border-radius:8px;border-color:var(--mut);color:var(--mut)}
+.grid{display:grid;grid-template-columns:1.25fr 1fr;gap:14px}@media(max-width:800px){.grid{grid-template-columns:1fr}}
+.c{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.14)}
+#ctl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center;font-size:13px;color:var(--mut)}#ctl input{width:150px}
+svg{width:100%;height:auto;display:block}
+h2{margin:0;font-size:20px;color:var(--g)}.tm{font-size:12px;background:var(--l);border-radius:999px;padding:2px 8px;color:var(--mut);margin-left:6px}
+.do{background:var(--warn);border-left:4px solid var(--y);padding:8px 10px;border-radius:6px;margin:10px 0;font-size:14px}
+.sayh{font-weight:700;color:var(--t);margin:8px 0 2px;font-size:13px;letter-spacing:.04em}
+ul{margin:0;padding-left:18px;line-height:1.5;font-size:15px}li{margin-bottom:4px}
+.dyn{margin-top:10px;background:var(--l);border-radius:10px;padding:10px;font-size:14px;line-height:1.45}
+.st{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.st div{background:var(--card);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--mut)}.st b{display:block;font-size:17px;color:var(--t)}
+.lv{cursor:pointer}.lv:hover{opacity:.85}
+@keyframes mv{to{stroke-dashoffset:-24}}.an{stroke-dasharray:6 6;animation:mv 1s linear infinite}
+#chk label{display:block;padding:8px 6px;border-bottom:1px solid var(--l);font-size:15px;cursor:pointer}#chk input{margin-right:8px;transform:scale(1.2)}
+.bar{height:10px;background:var(--l);border-radius:6px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--gr);width:0}
+.ft{font-size:12px;color:var(--mut);margin-top:12px;text-align:center}
+.nb{display:flex;gap:8px;margin-top:12px}
+</style></head><body><div class="w">
+<h1>Team Sirius · Courtyard Rise</h1><div class="sub">B+G+9 mixed-use building · SIH26116</div>
+<div id="nav"></div>
+<div class="grid"><div class="c"><div id="ctl"></div><svg id="sv" viewBox="0 0 450 380"></svg></div>
+<div class="c"><h2 id="tt"></h2><div class="dyn" id="dyn"></div>
+<div class="nb"><button class="pn" onclick="go(cur-1)">← Previous</button><button class="pn" onclick="go(cur+1)">Next →</button></div></div></div>
+<div class="ft">Assumed values (plot 45 × 40 m, grid 6 m, sizes) are for the concept.</div></div>
+<script>
+const $=i=>document.getElementById(i);
+const R=(x,y,w,h,f,e='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${e}/>`;
+const X=(x,y,t,s=11,f='var(--ink)',a='middle',e='')=>`<text x="${x}" y="${y}" font-size="${s}" fill="${f}" text-anchor="${a}" ${e}>${t}</text>`;
+const Ln=(x1,y1,x2,y2,c,w=1,e='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${e}/>`;
+const st={floor:3,plan:'typ',court:'air',orient:'S',alt:65,depth:700,layer:'all',green:-1,chk:{}};
+const TABS=['1 Overview','2 Floors','3 Plans','4 Courtyard','5 Facade & Sun','6 Structure','7 Green & EV'];
+let cur=0;
+function go(i){cur=(i+TABS.length)%TABS.length;render()}
+function set(k,v){st[k]=v;if(k==='orient'){const P={S:[65,700],W:[25,1200],E:[30,600],N:[70,300]}[v];st.alt=P[0];st.depth=P[1]}V[cur].ctl();V[cur].draw()}
+function btns(k,arr){return arr.map(([v,l])=>`<button class="${st[k]==v?'on':''}" onclick="set('${k}',${typeof v=='number'?v:"'"+v+"'"})">${l}</button>`).join('')}
+function stat(a){return '<div class="st">'+a.map(([b,l])=>`<div><b>${b}</b>${l}</div>`).join('')+'</div>'}
+function draw(svg,vb,dyn){$('sv').setAttribute('viewBox',vb);$('sv').innerHTML=svg;$('dyn').innerHTML=dyn}
+/* ---- levels for section views ---- */
+const LV=[{n:'Roof terrace garden',h:24,c:'var(--gr)',u:'Rooftop garden, seating, solar panels, water tank.',m:'Green roof cools the floor below.'}];
+for(let i=9;i>=2;i--)LV.push({n:'Level '+i,h:28,c:i%2?'var(--t)':'#d9793a',u:'4 homes (2 & 3 BHK) around the courtyard, with balconies.',m:'Floor height 3,200 mm'});
+LV.push({n:'1st floor',h:38,c:'var(--b)',u:'Co-working, clinic, community spaces, podium garden deck.',m:'Floor height 4,200 mm'},{n:'Ground floor',h:40,c:'#1f4e79',u:'Shops, cafés, resident lobby and the public courtyard plaza.',m:'Floor height 4,500 mm'},{n:'Basement',h:32,c:'#6b6b6b',u:'Parking for about 70 cars, 12 EV bays, services, light and vent well.',m:'Height 3,600 mm'});
+function section(sel,extra=''){let y=20,o='';const bx=70,ww=107;
+LV.forEach((l,i)=>{const s=sel===i;const op=s||sel<0?1:.6;
+o+=`<g class="lv" onclick="${extra||'pick('+i+')'}">`+R(bx,y,ww,l.h,l.c,`opacity="${op}" stroke="var(--card)"`)+R(bx+2*ww,y,ww,l.h,l.c,`opacity="${op}" stroke="var(--card)"`)+R(bx+ww,y,ww,l.h,'var(--l)','opacity=".7"')+(s?R(bx-2,y-2,3*ww+4,l.h+4,'none','stroke="var(--y)" stroke-width="3"'):'')+'</g>';y+=l.h});
+return {o,y,bx,ww}}
+function pick(i){st.floor=i;V[1].draw()}
+/* ---- views ---- */
+const V=[
+{ctl(){$('ctl').innerHTML=''},draw(){let o=R(30,20,360,320,'var(--l)','stroke="var(--g)"')+R(66,60,288,240,'var(--card)','stroke="var(--t)" stroke-width="2"');
+for(let k=1;k<6;k++)o+=Ln(66+48*k,60,66+48*k,300,'var(--mut)',.5,'stroke-dasharray="3" opacity=".6"');for(let k=1;k<5;k++)o+=Ln(66,60+48*k,354,60+48*k,'var(--mut)',.5,'stroke-dasharray="3" opacity=".6"');
+o+=R(162,132,96,96,'#cfe8c2','stroke="var(--gr)" stroke-width="2"')+X(210,178,'Courtyard',12,'#2f6b1a','middle','font-weight="bold"')+X(210,192,'12 × 12 m',10,'#2f6b1a')
++X(210,50,'Plot 45 × 40 m (assumed)',12,'var(--g)','middle','font-weight="bold"')+X(210,84,'Building 36 × 30 m',11,'var(--t)')+X(210,322,'Setbacks: 4.5 m sides · 5 m front & rear',10,'var(--mut)')
++R(30,346,360,28,'#777')+X(210,364,'Main road (south)',12,'#fff')+Ln(425,60,425,30,'var(--ink)',2)+X(425,24,'N',12,'var(--ink)','middle','font-weight="bold"')+X(425,78,'6 m grid',10,'var(--mut)');
+draw(o,'0 0 450 380',stat([['34.3 m','total height'],['B+G+9','levels'],['32','homes'],['~70','car bays'],['12','EV bays'],['144 m²','courtyard']])+'<div style="margin-top:8px">Three words to remember: <b style="color:var(--t)">Activate</b> · <b style="color:var(--b)">Open up</b> · <b style="color:var(--gr)">Green up</b></div>')}},
+{ctl(){$('ctl').innerHTML='Click a floor →'},draw(){const {o,y,bx,ww}=section(st.floor);const l=LV[st.floor];
+draw(o+X(bx+1.5*ww,y+22,'Courtyard void runs through all floors',11,'var(--mut)'),'0 0 450 400',`<b style="color:var(--t)">${l.n}</b><br>${l.u}<br><span style="color:var(--mut)">${l.m}</span>`+stat([['32','homes total'],['4','homes / floor'],['~936 m²','floor plate (36×30 minus court)']]))}},
+{ctl(){$('ctl').innerHTML=btns('plan',[['typ','Typical floor'],['gnd','Ground floor'],['bas','Basement']])},draw(){let o=R(45,20,360,300,'var(--card)','stroke="var(--g)" stroke-width="2"'),d;const ct=(t,s)=>R(165,110,120,120,s,'stroke="var(--gr)" stroke-width="2" stroke-dasharray="5"')+X(225,166,t,12,'#2f6b1a','middle','font-weight="bold"');
+const box=(x,y,w,h,f,t,c='#fff')=>R(x,y,w,h,f,'stroke="var(--card)" stroke-width="2"')+X(x+w/2,y+h/2+4,t,12,c,'middle','font-weight="bold"');
+if(st.plan=='typ'){o+=box(45,20,180,90,'var(--t)','Home A (3 BHK)')+box(225,20,180,90,'#d9793a','Home B (2 BHK)')+box(45,230,180,90,'#d9793a','Home C (2 BHK)')+box(225,230,180,90,'var(--t)','Home D (3 BHK)')+box(45,110,120,120,'#8a8f8d','Lift + stairs')+box(285,110,120,120,'#8a8f8d','Service + shafts')+ct('Courtyard','#cfe8c2');
+[[175,110],[235,110],[175,222],[235,222]].forEach(p=>o+=R(p[0],p[1],48,8,'var(--gr)'));[[100,12],[290,12],[100,320],[290,320]].forEach(p=>o+=R(p[0],p[1],70,8,'var(--gr)'));
+d='<b>Typical floor (levels 2–9):</b> 4 homes around the court, lift and stairs core on one side, shafts on the other. Green strips are balconies and planters.'}
+else if(st.plan=='gnd'){o+=box(45,20,180,90,'#1f4e79','Café')+box(225,20,180,90,'#2e75b6','Retail')+box(45,110,120,120,'#3d8fa8','Community hall')+box(285,110,120,120,'#2e75b6','Retail')+box(45,230,120,90,'#1f4e79','Shop')+box(165,230,120,90,'var(--gr)','Resident lobby')+box(285,230,120,90,'#1f4e79','Shop')+ct('Public plaza','#cfe8c2');
+[[190,140],[260,140],[190,200],[260,200]].forEach(p=>o+=`<circle cx="${p[0]}" cy="${p[1]}" r="9" fill="var(--gr)"/>`);o+=X(225,346,'▼ Street side (south) ▼',11,'var(--mut)');
+d='<b>Ground floor:</b> shops and cafés open to the street and the plaza. Homes have their own separate lobby at the front.'}
+else{o+=ct('Light + vent well','#dbeaf7');for(let i=0;i<12;i++){o+=R(50+i*29,25,26,38,i<0?'':'#9aa5a1')+R(50+i*29,68,26,38,'#9aa5a1')+R(50+i*29,238,26,38,i<12?'var(--b)':'#9aa5a1')+R(50+i*29,280,26,34,'#9aa5a1')}
+for(let j=0;j<4;j++)o+=R(50,116+j*28,60,24,'#9aa5a1')+R(340,116+j*28,60,24,'#9aa5a1');o+=R(300,228,0,0,'none')+X(225,262,'',1)+X(225,346,'Blue bays = 12 EV chargers · ~70 bays in total (approx.)',11,'var(--mut)');
+d='<b>Basement:</b> parking and EV charging. The courtyard continues down as a light and vent well, so the basement is brighter and needs less fan power.'}
+draw(o,'0 0 450 360',d)}},
+{ctl(){$('ctl').innerHTML=btns('court',[['air','Airflow'],['day','Daylight'],['grn','Greenery']])},draw(){let o='<defs><clipPath id="cp"><rect x="160" y="0" width="140" height="340"/></clipPath><marker id="ar" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="context-stroke"/></marker></defs>'+R(40,30,120,310,'var(--l)','stroke="var(--g)"')+R(300,30,120,310,'var(--l)','stroke="var(--g)"');
+for(let k=1;k<11;k++)o+=Ln(40,30+k*28,160,30+k*28,'var(--mut)',.5,'opacity=".5"')+Ln(300,30+k*28,420,30+k*28,'var(--mut)',.5,'opacity=".5"');o+=R(160,340,140,22,'#cfe8c2')+X(230,355,'Ground plaza',10,'#2f6b1a');let d;
+if(st.court=='air'){[190,230,270].forEach(x=>o+=Ln(x,330,x,50,'#d9503a',3,'class="an" style="animation-direction:reverse" marker-end="url(#ar)"'));[300,240].forEach(y=>o+=Ln(10,y+10,160,y+10,'var(--b)',3,'class="an" marker-end="url(#ar)"')+Ln(450,y+10,300,y+10,'var(--b)',3,'class="an" marker-end="url(#ar)"'));o+=X(230,28,'Warm air rises ↑',12,'#d9503a','middle','font-weight="bold"')+X(60,232,'Cool air in →',11,'var(--b)')+X(390,232,'← Cool air in',11,'var(--b)');d='<b>Stack effect:</b> the courtyard works like a chimney. Warm air leaves at the top and cool street air is pulled in at the bottom.'}
+else if(st.court=='day'){o+='<g clip-path="url(#cp)">';for(let i=0;i<9;i++)o+=Ln(120+i*30,0,120+i*30+340,340,'var(--y)',4,'opacity=".8"');o+='</g>'+R(296,30,6,310,'var(--y)','opacity=".5"')+X(230,28,'Sunlight drops in ↓',12,'var(--t)','middle','font-weight="bold"')+X(360,190,'Inner rooms',11,'var(--ink)')+X(360,204,'get daylight',11,'var(--ink)');d='<b>Daylight:</b> the open court lets sun reach the inner faces of the building, so rooms are bright without lights on.'}
+else{[190,230,270].forEach(x=>o+=`<circle cx="${x}" cy="332" r="12" fill="var(--gr)"/>`);for(let k=0;k<10;k+=2)o+=R(148,52+k*28,12,8,'var(--gr)')+R(300,52+k*28,12,8,'var(--gr)');o+=R(40,24,120,6,'var(--gr)')+R(300,24,120,6,'var(--gr)')+X(230,180,'Planters on',11)+X(230,194,'every 2nd floor',11)+X(230,20,'Roof gardens',11,'var(--gr)');d='<b>Greenery:</b> trees on the plaza, planters on terraces and gardens on the roof make the court cooler and calmer.'}
+draw(o,'0 0 460 380',d)}},
+{ctl(){$('ctl').innerHTML=btns('orient',[['S','South'],['W','West'],['E','East'],['N','North']])+`<span>Sun <b id="va">${st.alt}</b>°</span><input type="range" min="15" max="80" value="${st.alt}" oninput="st.alt=+this.value;$('va').textContent=this.value;V[4].draw()"><span>Shade depth <b id="vd">${st.depth}</b> mm</span><input type="range" min="0" max="1500" step="50" value="${st.depth}" oninput="st.depth=+this.value;$('vd').textContent=this.value;V[4].draw()">`},
+draw(){const ta=Math.tan(st.alt*Math.PI/180),need=Math.round(1500/ta),sh=Math.min(100,Math.round(st.depth*ta/1500*100)),dp=st.depth*.06,tx=260-dp;
+let o=R(255,30,10,230,'var(--mut)')+R(265,110,6,90,'var(--b)','opacity=".35"')+R(265,110,6,Math.min(90,dp*ta),'#222','opacity=".8"')+R(tx,106,dp+10,6,'var(--t)')+R(140,256,140,8,'var(--mut)')+R(140,26,140,8,'var(--mut)');
+for(let k=0;k<3;k++){const y0=110+k*40;o+=Ln(tx-140,y0-140*ta,tx+dp,y0+dp*ta,'var(--y)',3,'opacity=".85"')}
+o+=X(90,60,'☀ Sun',14,'var(--y)','middle','font-weight="bold"')+X(200,236,'Outside',11,'var(--mut)')+X(330,236,'Inside',11,'var(--mut)')+X(300,102,'Window 1.5 m',10,'var(--b)','start');
+const wx=[40,120,200,280,360],y=292;o+=R(20,272,420,96,'var(--l)');
+wx.forEach((x,i)=>{o+=R(x+8,y,50,54,'#3a6ea5');if(st.orient=='S')o+=R(x,y-8,66,5,'var(--t)');if(st.orient=='N')for(let k=0;k<3;k++)o+=R(x+8,y+10+k*14,50,2,'var(--t)')});
+if(st.orient=='W'||st.orient=='E')for(let i=0;i<6;i++)o+=R(24+i*80,st.orient=='W'?276:290,8,st.orient=='W'?86:60,'var(--t)');
+o+=X(230,380,{S:'Horizontal shelves',W:'Deep vertical fins',E:'Short vertical fins',N:'Light louvres'}[st.orient]+' (elevation, schematic)',11,'var(--mut)');
+const txt={S:'Sun is high at midday, so a simple shelf works.',W:'Sun is low and hot in the evening. A shelf cannot block it, so use vertical fins plus deep balconies.',E:'Morning sun is gentle. Short fins are enough and views stay open.',N:'Little direct sun. Keep glass large for soft light and add light louvres against glare.'}[st.orient];
+draw(o,'0 0 460 390',`<b>${st.orient=='S'?'South':st.orient=='W'?'West':st.orient=='E'?'East':'North'} facade:</b> ${txt}`+stat([[sh+'%','of window shaded'],[need+' mm','depth for full shade'],[st.depth+' mm','current depth']])+(need>1200?'<div style="margin-top:6px;color:var(--t)">A shelf this deep (over 1.2 m) is not practical at this sun angle. Use vertical fins and balconies instead.</div>':''))}},
+{ctl(){$('ctl').innerHTML=btns('layer',[['col','Columns'],['beam','Beams'],['slab','Slab'],['all','All'],['reb','Beam detail']])},draw(){const s=10,ox=45,oy=25,L=st.layer;let o='';const inC=(x,y)=>x>12&&x<24&&y>9&&y<21,inB=(x,y)=>x>12&&x<24&&y>=9&&y<=21;
+if(L=='reb'){o=R(150,40,120,240,'#d8dedb','stroke="var(--ink)" stroke-width="2"')+R(160,50,100,220,'none','stroke="var(--t)" stroke-width="2"');[[172,60],[248,60]].forEach(p=>o+=`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="var(--ink)"/>`);[[172,258],[210,258],[248,258]].forEach(p=>o+=`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="var(--ink)"/>`);
+o+=X(210,300,'300 mm',11,'var(--mut)')+X(120,165,'600 mm',11,'var(--mut)','middle','transform="rotate(-90 120 165)"')+X(345,62,'Top bars: 2 × 16 mm',12,'var(--ink)','start')+X(345,262,'Bottom bars: 3 × 20 mm',12,'var(--ink)','start')+X(345,160,'Stirrups: 8 mm @ 150 mm',12,'var(--t)','start')+X(345,180,'Cover: 25 mm',12,'var(--ink)','start')+X(225,340,'Beam cross-section (assumed for concept)',11,'var(--mut)');
+draw(o,'0 0 540 350','<b>Beam detail:</b> steel bars carry the pull, concrete carries the push, stirrups hold it together. Final design will follow IS 456 and IS 13920 in Revit.');return}
+if(L=='slab'||L=='all')o+=`<path d="M${ox} ${oy}h360v300h-360z M${ox+120} ${oy+90}h120v120h-120z" fill="var(--b)" opacity=".18" fill-rule="evenodd"/>`;
+o+=R(ox+120,oy+90,120,120,'none','stroke="var(--gr)" stroke-width="2" stroke-dasharray="5"')+X(ox+180,oy+155,'Courtyard',11,'#2f6b1a');
+if(L=='beam'||L=='all'){for(let i=0;i<=6;i++)for(let j=0;j<5;j++)if(!inB(6*i,6*j+3))o+=Ln(ox+6*i*s,oy+6*j*s,ox+6*i*s,oy+6*(j+1)*s,'var(--t)',3);for(let j=0;j<=5;j++)for(let i=0;i<6;i++)if(!inB(6*i+3,6*j))o+=Ln(ox+6*i*s,oy+6*j*s,ox+6*(i+1)*s,oy+6*j*s,'var(--t)',3)}
+if(L=='col'||L=='all')for(let i=0;i<=6;i++)for(let j=0;j<=5;j++)if(!inC(6*i,6*j))o+=R(ox+6*i*s-4,oy+6*j*s-4,8,8,'var(--ink)');
+o+=X(225,352,'6 m grid · 7 × 6 column lines · columns skip the open courtyard',11,'var(--mut)');
+const dd={col:'<b>Columns:</b> 600 × 600 mm at the bottom, 450 × 450 mm above (assumed).',beam:'<b>Beams:</b> 300 × 600 mm along every grid line. Edge beams frame the courtyard.',slab:'<b>Slab:</b> 200 mm thick, with a hole for the courtyard.',all:'<b>Full frame:</b> columns + beams + slab on a raft foundation. Stairs and lift cores are added on top in Revit.'}[L];
+draw(o,'0 0 450 360',dd)}},
+{ctl(){$('ctl').innerHTML=btns('green',[[-1,'All'],[0,'Plaza'],[1,'Podium deck'],[2,'Balcony planters'],[3,'Roof'],[4,'Basement EV']])},draw(){const g=st.green,op=i=>g<0||g==i?1:.25;let o='',ww=107,bx=70;
+for(let k=0;k<8;k++)o+=R(bx,40+k*28,ww,28,'var(--l)','stroke="var(--card)"')+R(bx+2*ww,40+k*28,ww,28,'var(--l)','stroke="var(--card)"');
+o+=R(bx,264,ww,38,'#c9d7e8','stroke="var(--card)"')+R(bx+2*ww,264,ww,38,'#c9d7e8','stroke="var(--card)"')+R(bx,302,ww,40,'#b7c9de','stroke="var(--card)"')+R(bx+2*ww,302,ww,40,'#b7c9de','stroke="var(--card)"')+R(bx,342,ww,32,'#9aa5a1')+R(bx+2*ww,342,ww,32,'#9aa5a1')+R(bx+ww,342,ww,32,'#dbeaf7','stroke-dasharray="4" stroke="var(--b)"');
+o+=`<g opacity="${op(0)}">`+R(bx+ww,336,ww,6,'#cfe8c2')+[110,160,210].map((x,i)=>`<circle cx="${bx+ww/2+x-70+i*0}" cy="326" r="10" fill="var(--gr)"/>`).join('')+X(bx+1.5*ww,318,'Plaza',10,'#2f6b1a')+'</g>';
+o+=`<g opacity="${op(1)}">`+R(bx+ww-26,258,26,6,'var(--gr)')+R(bx+2*ww,258,26,6,'var(--gr)')+X(bx+1.5*ww,254,'Podium deck',10,'var(--gr)')+'</g>';
+o+=`<g opacity="${op(2)}">`+Array.from({length:8},(_,k)=>R(bx-10,54+k*28,10,8,'var(--gr)')+R(bx+3*ww,54+k*28,10,8,'var(--gr)')).join('')+'</g>';
+o+=`<g opacity="${op(3)}">`+R(bx,28,ww,12,'var(--gr)')+R(bx+2*ww,28,ww,12,'var(--gr)')+R(bx+2*ww+10,18,80,8,'#1f4e79')+X(bx+2*ww+50,14,'Solar panels',10,'var(--b)')+X(bx+ww/2,24,'Roof garden',10,'var(--gr)')+'</g>';
+o+=`<g opacity="${op(4)}">`+[0,1,2].map(i=>R(bx+8+i*30,350,24,16,'var(--b)')+R(bx+2*ww+8+i*30,350,24,16,'var(--b)')).join('')+X(bx+ww/2,388,'12 EV bays (basement)',10,'var(--b)')+'</g>';
+const D=['<b>Plaza:</b> trees, seating and shade at the heart of the ground floor, open to the public.','<b>Podium deck:</b> a green terrace on the first floor for people working or visiting.','<b>Balcony planters:</b> every home has its own green edge.','<b>Roof:</b> garden and solar panels. Solar can help run lifts and lights in common areas.','<b>Basement EV:</b> 12 charging bays, so residents can switch to electric cars.'];
+draw(o,'0 0 460 400',(g<0?'<b>Green chain:</b> plaza → podium → balconies → roof, plus EV charging below.':D[g])+stat([['4','green layers'],['12','EV bays'],['8','floors with planters']]))}}];
+function render(){$('nav').innerHTML=TABS.map((t,i)=>`<button class="${i==cur?'on':''}" onclick="go(${i})">${t}</button>`).join('');
+$('tt').textContent=TABS[cur].slice(2);V[cur].ctl();V[cur].draw()}
+document.addEventListener('keydown',e=>{if(e.key=='ArrowRight')go(cur+1);if(e.key=='ArrowLeft')go(cur-1)});
+render();
+</script></body></html>
